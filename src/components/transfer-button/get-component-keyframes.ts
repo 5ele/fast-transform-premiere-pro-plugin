@@ -2,12 +2,14 @@
 
 import { premierepro, uxp } from "../../globals";
 import type {
+	AudioClipTrackItem,
 	Color,
 	Component,
 	ComponentParam,
 	Keyframe,
 	PointF,
 	TickTime,
+	VideoClipTrackItem,
 } from "../../types/ppro";
 import { getSelectedClipsFromTimeline } from "./get-selected-clips";
 
@@ -68,42 +70,47 @@ type KeyframesOrValue = {
 export type ComponentKeyframesAndValues = Record<string, KeyframesOrValue>;
 
 // gets keyframe data, disables the effects
-export const getComponentKeyframesOrValuesFromSelectedClips = async (
-	componentMatchName: string,
-): Promise<ComponentKeyframesAndValues | undefined> => {
+export const getComponentKeyframesOrValuesFromSelectedClips = async ({
+	componentMatchName,
+	clip,
+}: {
+	componentMatchName: string;
+	clip: VideoClipTrackItem | AudioClipTrackItem;
+}): Promise<ComponentKeyframesAndValues | undefined> => {
 	// let motionParams: MotionParams;
 	// let opacityParams: OpacityParams;
 	let keyframesAndValues: ComponentKeyframesAndValues;
 
 	try {
-		const selectedClips = await getSelectedClipsFromTimeline();
+		// const selectedClips = await getSelectedClipsFromTimeline();
 
 		// LOOP OVER ALL SELECTED CLIPS (AUDIO + VIDEO)
-		for (const clip of selectedClips) {
-			// typeof clip = VideoTrackClipItem | AudioTrackClipItem
-			// ------ this guard checks if the clip is a VideoTrackClipItem
-			// ------ commented b/c maybe I want it to work with audio effects too
-			// if (clip && typeof clip.createAddVideoTransitionAction !== "function")
-			// 	return;
+		// for (const clip of selectedClips) {
+		// typeof clip = VideoTrackClipItem | AudioTrackClipItem
+		// ------ this guard checks if the clip is a VideoTrackClipItem
+		// ------ commented b/c maybe I want it to work with audio effects too
+		// if (clip && typeof clip.createAddVideoTransitionAction !== "function")
+		// 	return;
 
-			// SEARCH EFFECTS ON CLIP
-			const componentChain = await clip.getComponentChain();
-			const numComponents = await componentChain.getComponentCount();
+		// SEARCH EFFECTS ON CLIP
+		const componentChain = await clip.getComponentChain();
+		const numComponents = await componentChain.getComponentCount();
 
-			for (let i = 0; i < numComponents; i++) {
-				const component = componentChain.getComponentAtIndex(i);
-				const matchName = await component.getMatchName();
+		for (let i = 0; i < numComponents; i++) {
+			const component = componentChain.getComponentAtIndex(i);
+			const matchName = await component.getMatchName();
 
-				// FOUND EFFECT / "component"
-				if (matchName === componentMatchName) {
-					const params = await getComponentParams(component);
-					keyframesAndValues = await getKeyframesAndValuesFromParams(params);
+			// FOUND EFFECT / "component"
+			if (matchName === componentMatchName) {
+				const params = await getComponentParams(component);
+				keyframesAndValues = await getKeyframesAndValuesFromParams(params);
 
-					return keyframesAndValues;
-				}
+				return keyframesAndValues;
 			}
 		}
+		// }
 	} catch (e) {
+		console.log("🚀 ~ getComponentKeyframesOrValuesFromSelectedClips ~ e:", e);
 		console.error(e);
 		return;
 	}

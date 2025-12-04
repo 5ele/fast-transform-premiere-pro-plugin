@@ -15,5 +15,6 @@
 		"types": ["@adobe/cc-ext-uxp-types", "@types/photoshop", "@types/node"],
 		"outDir": "dist"
 	},
-	"include": ["./src", "./src/**/*.ts", "./src/**/*.tsx", "./package.json"]
+	"include": ["./src", "./src/**/*.ts", "./src/**/*.tsx", "./package.json"],
+	"exclude": ["./src/**/*.js", "./src/**/*.jsx"]
 }
