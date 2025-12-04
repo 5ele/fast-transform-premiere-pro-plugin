@@ -9,7 +9,13 @@ import {
 	MotionParamDisplayNames,
 	OpacityParamDisplayNames,
 } from "../types/effect-param-display-names";
-import { Component, ComponentParam, PointF, TickTime } from "../types/ppro";
+import {
+	Component,
+	ComponentParam,
+	Keyframe,
+	PointF,
+	TickTime,
+} from "../types/ppro";
 
 export type MotionParams = {
 	position: PointF;
@@ -31,19 +37,19 @@ export type OpacityParams = {
 
 // TODO: 	refactor to just return Keyframe[]. Not really any point to
 // 				just return this info.
-type KeyframeInfo<T> = {
-	tickTime: TickTime;
-	value: T;
-};
+// type KeyframeInfo<T> = {
+// 	tickTime: TickTime;
+// 	value: T;
+// };
 export type KeyframesOrValue<T> = {
 	hasKeyframes: boolean;
-	keyframesOrValue: T | KeyframeInfo<T>[];
+	keyframesOrValue: T | Keyframe[];
 };
 
 // KeyframesOrValue stores a bool: are there any keyframes?
 // 			- if yes: it stores an array of those keyframes,
 //			- if no: 	it stores the value.
-export type MotionKeyframes = {
+export type MotionKeyframesOrValue = {
 	position: KeyframesOrValue<PointF>;
 	scale: KeyframesOrValue<number>;
 	scaleWidth: KeyframesOrValue<number>;
@@ -57,24 +63,27 @@ export type MotionKeyframes = {
 	cropBottom: KeyframesOrValue<number>;
 };
 
-export type OpacityKeyframes = {
+export type OpacityKeyframesOrValue = {
 	opacity: KeyframesOrValue<number>;
 	blendMode: KeyframesOrValue<number>;
 };
 
 // gets keyframe data, disables the effects
-export const getKeyframesFromMotionAndOpacity = async (): Promise<{
-	motionKeyframes: MotionKeyframes;
-	opacityKeyframes: OpacityKeyframes;
-}> => {
+export const getKeyframesFromMotionAndOpacity = async (): Promise<
+	| {
+			motionKeyframes: MotionKeyframesOrValue;
+			opacityKeyframes: OpacityKeyframesOrValue;
+	  }
+	| undefined
+> => {
 	// let motionParams: MotionParams;
 	// let opacityParams: OpacityParams;
-	let opacityKeyframes: OpacityKeyframes;
-	let motionKeyframes: MotionKeyframes;
+	let opacityKeyframes: OpacityKeyframesOrValue;
+	let motionKeyframes: MotionKeyframesOrValue;
 
 	try {
 		const selectedClips = await getSelectedClipsFromTimeline();
-		selectedClips.map(async (clip) => {
+		for (const clip of selectedClips) {
 			// clipInTimeline: VideoTrackClipItem | AudioTrackClipItem
 			// - this guard checks if the clip is a VideoTrackClipItem
 			if (clip && typeof clip.createAddVideoTransitionAction !== "function")
@@ -87,29 +96,32 @@ export const getKeyframesFromMotionAndOpacity = async (): Promise<{
 			for (let i = 0; i < numComponents; i++) {
 				const component = componentChain.getComponentAtIndex(i);
 				const matchName = await component.getMatchName();
-				// console.log("🚀 ~ getSelected ~ matchName:", matchName);
-
-				// const removeComponent =
-				// 	componentChain.createRemoveComponentAction(component);
 
 				// FOUND MOTION EFFECT/"component"
 				if (matchName === MATCH_NAME_MOTION) {
 					const params = await getComponentParams(component);
 					motionKeyframes = getMotionKeyframes(params);
+					console.log(
+						"🚀 ~ getKeyframesFromMotionAndOpacity ~ motionKeyframes:",
+						motionKeyframes,
+					);
 				}
 				// FOUND OPACITY EFFECT/"component"
 				else if (matchName === MATCH_NAME_OPACITY) {
 					const params = await getComponentParams(component);
 					opacityKeyframes = getOpacityKeyframes(params);
+					console.log(
+						"🚀 ~ getKeyframesFromMotionAndOpacity ~ opacityKeyframes:",
+						opacityKeyframes,
+					);
 				}
 			}
-		});
+		}
+		return { motionKeyframes, opacityKeyframes };
 	} catch (e) {
 		console.error(e);
 		return;
 	}
-
-	return { motionKeyframes, opacityKeyframes };
 };
 
 // Track Item === Clip in the timeline
@@ -131,7 +143,7 @@ const getComponentParams = async (component: Component) => {
 };
 
 const getMotionKeyframes = (params: ComponentParam[]) => {
-	const keyframes: Partial<MotionKeyframes> = {
+	const keyframes: Partial<MotionKeyframesOrValue> = {
 		position: { hasKeyframes: false, keyframesOrValue: [] },
 		scale: { hasKeyframes: false, keyframesOrValue: [] },
 		scaleWidth: { hasKeyframes: false, keyframesOrValue: [] },
@@ -184,11 +196,11 @@ const getMotionKeyframes = (params: ComponentParam[]) => {
 		}
 	});
 
-	return keyframes as MotionKeyframes;
+	return keyframes as MotionKeyframesOrValue;
 };
 
 const getOpacityKeyframes = (params: ComponentParam[]) => {
-	const keyframes: Partial<OpacityKeyframes> = {
+	const keyframes: Partial<OpacityKeyframesOrValue> = {
 		opacity: { hasKeyframes: false, keyframesOrValue: [] },
 		blendMode: { hasKeyframes: false, keyframesOrValue: [] },
 	};
@@ -205,14 +217,14 @@ const getOpacityKeyframes = (params: ComponentParam[]) => {
 		}
 	});
 
-	return keyframes as OpacityKeyframes;
+	return keyframes as OpacityKeyframesOrValue;
 };
 
 const getKeyframes = async <T>(
 	param: ComponentParam,
 ): Promise<KeyframesOrValue<T>> => {
 	const paramKeyframeTimes: TickTime[] = param.getKeyframeListAsTickTimes();
-	const keyframes: KeyframeInfo<T>[] = [];
+	const keyframes: Keyframe[] = [];
 
 	// no keyframes, return the value
 	if (paramKeyframeTimes.length === 0) {
@@ -225,13 +237,11 @@ const getKeyframes = async <T>(
 		paramKeyframeTimes.forEach(async (keyframeTime) => {
 			const keyframe = await param.getKeyframePtr(keyframeTime);
 
-			keyframes.push({
-				tickTime: keyframe.position,
-				value: keyframe.value.value as T,
-			});
+			keyframes.push(keyframe);
 		});
 	}
 
+	console.log("🚀 ~ getKeyframes ~ keyframes:", keyframes);
 	return { hasKeyframes: true, keyframesOrValue: keyframes };
 };
 
