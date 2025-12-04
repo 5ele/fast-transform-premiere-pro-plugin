@@ -11,7 +11,7 @@ import type {
 	TickTime,
 	VideoClipTrackItem,
 } from "../../types/ppro";
-import { getSelectedClipsFromTimeline } from "./get-selected-clips";
+import { getSelectedClipsFromTimeline } from "./get-project-entities";
 
 export type MotionParams = {
 	position: PointF;
@@ -26,6 +26,7 @@ export type MotionParams = {
 	cropRight: number;
 	cropBottom: number;
 };
+
 export type OpacityParams = {
 	opacity: number;
 	blendMode: number;
@@ -62,7 +63,7 @@ export type OpacityKeyframesOrValue = {
 //				prob only a bug if they change it.
 type ParamValue = string | number | boolean | PointF | Color;
 
-type KeyframesOrValue = {
+export type KeyframesOrValue = {
 	hasKeyframes: boolean;
 	keyframesOrValue: ParamValue | Keyframe[];
 };
@@ -70,7 +71,7 @@ type KeyframesOrValue = {
 export type ComponentKeyframesAndValues = Record<string, KeyframesOrValue>;
 
 // gets keyframe data, disables the effects
-export const getComponentKeyframesOrValuesFromSelectedClips = async ({
+export const getComponentKeyframesOrValuesFromClip = async ({
 	componentMatchName,
 	clip,
 }: {

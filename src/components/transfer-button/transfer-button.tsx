@@ -1,13 +1,12 @@
 import { useState } from "react";
-import { transferKeyframesToTransform } from "./transfer-keyframes-to-transform";
+import { motionKeyframesToTransformEffect } from "./transfer-keyframes-to-transform";
 
 export const TransferButton = () => {
 	const [output, setOutput] = useState("");
 	const handleClick = async () => {
 		try {
-			const response = await transferKeyframesToTransform({
-				includeOpacity: true,
-			});
+			const response = await motionKeyframesToTransformEffect("all");
+
 			const textRes = JSON.stringify(response);
 			setOutput(textRes);
 		} catch (e) {
@@ -15,6 +14,10 @@ export const TransferButton = () => {
 			setOutput(msg);
 		}
 	};
+
+	// const handleTestClick = async () => {
+	// 	const res = await motionKeyframesToTransformEffect("all");
+	// };
 	// const handleClick = async () => {
 	// 	const motionKeyframes =
 	// 		await getComponentKeyframesOrValuesFromSelectedClips(MATCH_NAME_MOTION);
@@ -30,6 +33,7 @@ export const TransferButton = () => {
 			<button onClick={handleClick}>
 				transfer Motion keyframes and values to Transform
 			</button>
+			{/* <button onClick={handleTestClick}>test</button> */}
 			<div
 				style={{
 					width: 400,

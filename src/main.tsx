@@ -8,14 +8,9 @@ import reactLogo from "./assets/react.png";
 import sassLogo from "./assets/sass.png";
 import tsLogo from "./assets/typescript.png";
 import viteLogo from "./assets/vite.png";
-import { getComponentKeyframesOrValuesFromSelectedClips } from "./components/transfer-button/get-component-keyframes";
+import { getComponentKeyframesOrValuesFromClip } from "./components/transfer-button/get-component-keyframes-from-clip";
 import { TransferButton } from "./components/transfer-button/transfer-button";
 import { premierepro, uxp } from "./globals";
-import {
-	MATCH_NAME_MOTION,
-	MATCH_NAME_OPACITY,
-} from "./types/effect-match-names";
-import { AudioClipTrackItem, VideoClipTrackItem } from "./types/ppro";
 
 declare global {
 	namespace JSX {
