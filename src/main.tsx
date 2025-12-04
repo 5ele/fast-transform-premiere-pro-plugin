@@ -8,8 +8,12 @@ import reactLogo from "./assets/react.png";
 import sassLogo from "./assets/sass.png";
 import tsLogo from "./assets/typescript.png";
 import viteLogo from "./assets/vite.png";
-import { getKeyframesFromMotionAndOpacity } from "./components/get-keyframes-motion-opacity";
+import { getComponentKeyframesOrValuesFromSelectedClips } from "./components/get-keyframes-motion-opacity";
 import { premierepro, uxp } from "./globals";
+import {
+	MATCH_NAME_MOTION,
+	MATCH_NAME_OPACITY,
+} from "./types/effect-match-names";
 import { AudioClipTrackItem, VideoClipTrackItem } from "./types/ppro";
 
 declare global {
@@ -33,9 +37,13 @@ declare global {
 export const App = () => {
 	const [count, setCount] = useState<any>();
 	const handleClick = async () => {
-		const keyframes = await getKeyframesFromMotionAndOpacity();
-		console.log("🚀 ~ handleClick ~ keyframes:", keyframes);
-		setCount(String(keyframes));
+		const motionKeyframes =
+			await getComponentKeyframesOrValuesFromSelectedClips(MATCH_NAME_MOTION);
+		const opacityKeyframes =
+			await getComponentKeyframesOrValuesFromSelectedClips(MATCH_NAME_OPACITY);
+		console.log("🚀 ~ handleClick ~ keyframes:", motionKeyframes);
+		console.log("🚀 ~ handleClick ~ opacityKeyframes:", opacityKeyframes);
+		setCount(String(motionKeyframes));
 	};
 	const handleSettingsClick = async () => {};
 	// const increment = () => setCount((prev) => prev + 1);
