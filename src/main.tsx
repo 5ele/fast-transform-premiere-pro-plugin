@@ -38,6 +38,7 @@ export const App = () => {
 
 	return (
 		<div>
+			<p>Does NOT transfer keyframe easing!</p>
 			<button onClick={handleClick}>click me! {count}</button>
 
 			<label htmlFor="opacity-checkbox">include opacity?</label>
