@@ -1,19 +1,19 @@
 {
-  "compilerOptions": {
-    "strict": true,
-    "composite": true,
-    "skipLibCheck": true,
-    "moduleResolution": "bundler",
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "module": "ESNext",
-    "resolveJsonModule": true,
-    "allowJs": true,
-    "checkJs": true,
-    "isolatedModules": true,
-    "jsx": "react-jsx",
-    "types": ["@adobe/cc-ext-uxp-types", "@types/photoshop", "@types/node"],
-    "outDir": "dist"
-  },
-  "include": ["./src","./src/**/*.ts","./src/**/*.tsx", "./package.json"]
+	"compilerOptions": {
+		"strict": true,
+		"composite": true,
+		"skipLibCheck": true,
+		"moduleResolution": "bundler",
+		"target": "ESNext",
+		"useDefineForClassFields": true,
+		"module": "ESNext",
+		"resolveJsonModule": true,
+		"allowJs": true,
+		"checkJs": true,
+		"isolatedModules": true,
+		"jsx": "react-jsx",
+		"types": ["@adobe/cc-ext-uxp-types", "@types/photoshop", "@types/node"],
+		"outDir": "dist"
+	},
+	"include": ["./src", "./src/**/*.ts", "./src/**/*.tsx", "./package.json"]
 }

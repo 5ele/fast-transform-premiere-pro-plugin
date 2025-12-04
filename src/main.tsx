@@ -8,7 +8,8 @@ import reactLogo from "./assets/react.png";
 import sassLogo from "./assets/sass.png";
 import tsLogo from "./assets/typescript.png";
 import viteLogo from "./assets/vite.png";
-import { getComponentKeyframesOrValuesFromSelectedClips } from "./components/get-keyframes-motion-opacity";
+import { getComponentKeyframesOrValuesFromSelectedClips } from "./components/transfer-button/get-component-keyframes";
+import { TransferButton } from "./components/transfer-button/transfer-button";
 import { premierepro, uxp } from "./globals";
 import {
 	MATCH_NAME_MOTION,
@@ -35,23 +36,22 @@ declare global {
  */
 
 export const App = () => {
-	const [count, setCount] = useState<any>();
-	const handleClick = async () => {
-		const motionKeyframes =
-			await getComponentKeyframesOrValuesFromSelectedClips(MATCH_NAME_MOTION);
-		const opacityKeyframes =
-			await getComponentKeyframesOrValuesFromSelectedClips(MATCH_NAME_OPACITY);
-		console.log("🚀 ~ handleClick ~ keyframes:", motionKeyframes);
-		console.log("🚀 ~ handleClick ~ opacityKeyframes:", opacityKeyframes);
-		setCount(String(motionKeyframes));
-	};
-	const handleSettingsClick = async () => {};
-	// const increment = () => setCount((prev) => prev + 1);
+	// const [count, setCount] = useState<any>();
+	// const handleClick = async () => {
+	// 	const motionKeyframes =
+	// 		await getComponentKeyframesOrValuesFromSelectedClips(MATCH_NAME_MOTION);
+	// 	const opacityKeyframes =
+	// 		await getComponentKeyframesOrValuesFromSelectedClips(MATCH_NAME_OPACITY);
+
+	// 	console.log("🚀 ~ handleClick ~ motionKeyframes:", motionKeyframes);
+	// 	console.log("🚀 ~ handleClick ~ opacityKeyframes:", opacityKeyframes);
+	// 	// setCount(String(motionKeyframes));
+	// };
 
 	return (
 		<div>
 			<p>Does NOT transfer keyframe easing!</p>
-			<button onClick={handleClick}>click me! {count}</button>
+			<TransferButton />
 
 			<label htmlFor="opacity-checkbox">include opacity?</label>
 			<input id="opacity-checkbox" type="checkbox" checked></input>

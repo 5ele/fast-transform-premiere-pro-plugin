@@ -3,7 +3,7 @@ export type MotionParamDisplayNames =
 	| "Position"
 	| "Scale"
 	| "Scale Width"
-	| " "
+	| " " // uniform scale: boolean
 	| "Rotation"
 	| "Anchor Point"
 	| "Anti-flicker Filter"

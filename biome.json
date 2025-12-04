@@ -6,7 +6,7 @@
 		"useIgnoreFile": true
 	},
 	"files": {
-		"includes": ["**", "!!**/dist"]
+		"includes": ["**", "!!**/dist", "!**/*.js", "!**/*.jsx"]
 	},
 	"formatter": {
 		"enabled": true,
@@ -15,13 +15,11 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true, "a11y": {
-
-        "useButtonType": "off"
-
-      }
-	
-  }
+			"recommended": true,
+			"a11y": {
+				"useButtonType": "off"
+			}
+		}
 	},
 	"javascript": {
 		"formatter": {
