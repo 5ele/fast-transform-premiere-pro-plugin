@@ -1,6 +1,5 @@
 /// <reference path="../../types/ppro.d.ts" />
 
-import { premierepro, uxp } from "../../globals";
 import type {
 	AudioClipTrackItem,
 	Color,
@@ -11,8 +10,7 @@ import type {
 	TickTime,
 	VideoClipTrackItem,
 } from "../../types/ppro";
-import { getSelectedClipsFromTimeline } from "./get-project-entities";
-import { Clip } from "./types";
+import type { Clip } from "./types";
 
 export type MotionParams = {
 	position: PointF;

@@ -1,4 +1,4 @@
-import { Clip } from "./types";
+import type { Clip } from "./types";
 
 // TODO: this is probably not working...................
 export const isVideoClipTrackItem = (clip: Clip) => {

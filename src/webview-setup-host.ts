@@ -20,9 +20,7 @@ export const webviewInitHost = ({
 	return new Promise((resolve, reject) => {
 		let pages = ["main"];
 		if (multi === true || Array.isArray(multi)) {
-			pages = config.manifest.entrypoints.map(
-				(point) => point.id.split(".")!.pop()!,
-			);
+			pages = config.manifest.entrypoints.map((point) => point.id.split(".")!.pop()!);
 			console.log("webviewInitHost multi pages", pages);
 		}
 		const apis: WebviewAPI[] = [];
@@ -66,10 +64,7 @@ export const webviewInitHost = ({
 						webview!.addEventListener("message", handler);
 					},
 					removeEventListener: (type: string, handler: any) => {
-						console.log(
-							"running removeEventListener",
-							webview!.removeEventListener,
-						);
+						console.log("running removeEventListener", webview!.removeEventListener);
 						webview!.removeEventListener("message", handler);
 					},
 				};

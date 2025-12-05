@@ -30,9 +30,7 @@ export const TransferButton = () => {
 
 	return (
 		<div>
-			<button onClick={handleClick}>
-				transfer Motion keyframes and values to Transform
-			</button>
+			<button onClick={handleClick}>transfer Motion keyframes and values to Transform</button>
 			{/* <button onClick={handleTestClick}>test</button> */}
 			<div
 				style={{

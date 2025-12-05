@@ -125,12 +125,8 @@ export declare type AudioComponentChain = {
 		component: Component | AudioFilterComponent,
 		componentInsertionIndex: number,
 	): Action; //Creates and returns an insert component action
-	createAppendComponentAction(
-		component: Component | AudioFilterComponent,
-	): Action; //Creates and returns an append component action
-	createRemoveComponentAction(
-		component: Component | AudioFilterComponent,
-	): Action; //Creates and returns an remove component action
+	createAppendComponentAction(component: Component | AudioFilterComponent): Action; //Creates and returns an append component action
+	createRemoveComponentAction(component: Component | AudioFilterComponent): Action; //Creates and returns an remove component action
 	getComponentAtIndex(componentIndex: number): Component; //Returns the component at the given index
 	getComponentCount(): number; //Gets the number of components in the component chain
 };
@@ -204,20 +200,12 @@ export declare type ClipProjectItem = {
 		isHiRes: boolean,
 		inMakeAlternateLinkInTeamProjects?: boolean,
 	): Promise<boolean>; //Attach proxy or high resolution footage to projectItem and returns true if successful. Not undoable.
-	findItemsMatchingMediaPath(
-		matchString: string,
-		ignoreSubclips?: boolean,
-	): Promise<ProjectItem[]>; //Returns array of project's items with media paths containing match string
+	findItemsMatchingMediaPath(matchString: string, ignoreSubclips?: boolean): Promise<ProjectItem[]>; //Returns array of project's items with media paths containing match string
 	refreshMedia(): Promise<boolean>; //Updates representation of the media associated with the project item
 	createSetOfflineAction(): Action; //Returns an action which sets the media offline
 	getFootageInterpretation(): Promise<FootageInterpretation>; //Get the footage interpretation object for project item
-	createSetFootageInterpretationAction(
-		footageInterpretation: FootageInterpretation,
-	): Action; //Set the footage interpretation object for project item
-	changeMediaFilePath(
-		newPath: string,
-		overrideCompatibilityCheck?: boolean,
-	): Promise<boolean>; //Change media file path of projectItem and returns true if successful. Not undoable.
+	createSetFootageInterpretationAction(footageInterpretation: FootageInterpretation): Action; //Set the footage interpretation object for project item
+	changeMediaFilePath(newPath: string, overrideCompatibilityCheck?: boolean): Promise<boolean>; //Change media file path of projectItem and returns true if successful. Not undoable.
 	isMergedClip(): Promise<boolean>; //Returns true if the clip Project item is a merged clip
 	isMulticamClip(): Promise<boolean>; //Returns true if the clip Project item is a multicam clip
 	getEmbeddedLUTID(): Promise<string>; //Get GUID of LUT embedded in media
@@ -233,10 +221,7 @@ export declare type ClipProjectItem = {
 	getMediaFilePath(): Promise<string>; //Get the media file path of the Project item.
 	getComponentChain(mediaType: Constants.MediaType): Promise<string>; //Get the media file path of the Project item.
 	createSetInPointAction(tickTime: TickTime): Action; //Returns an action which Sets the in point of the Project item
-	createSetOverridePixelAspectRatioAction(
-		inNumerator: number,
-		inDenominator: number,
-	): Action; //Returns an action which sets Override pixel aspect ratio
+	createSetOverridePixelAspectRatioAction(inNumerator: number, inDenominator: number): Action; //Returns an action which sets Override pixel aspect ratio
 	createSetOverrideFrameRateAction(inOverriddenFrameRateValue: number): Action; //Returns an action which sets the override frame rate
 	createSetOutPointAction(tickTime: TickTime): Action; //Returns an action which Sets the in point of the Project item
 	createSetInOutPointsAction(inPoint: TickTime, outPoint: TickTime): Action; //Set the in or out point of the Project item
@@ -250,9 +235,7 @@ export declare type CloseProjectOptions = {
 	(): CloseProjectOptions;
 	setPromptIfDirty(promptIfDirty: boolean): CloseProjectOptions; //Set whether to prompt if a project is dirty on project open/close
 	setShowCancelButton(showCancelButton: boolean): CloseProjectOptions; //Set whether to show the cancel button on project open/close
-	setIsAppBeingPreparedToQuit(
-		isAppBeingPreparedToQuit: boolean,
-	): CloseProjectOptions; //Set whether the app should be prepared to quit when open/closing a project
+	setIsAppBeingPreparedToQuit(isAppBeingPreparedToQuit: boolean): CloseProjectOptions; //Set whether the app should be prepared to quit when open/closing a project
 	setSaveWorkspace(isAppBeingPreparedToQuit: boolean): CloseProjectOptions; //Set whether to save your workspaces when opening/closing a project
 	promptIfDirty: boolean; //Get whether a prompt is shown if a project is dirty on project open/close
 	showCancelButton: boolean; //Get whether the cancel button is shown on project open/close
@@ -278,22 +261,13 @@ export declare type Component = {
 
 export declare type ComponentParam = {
 	createKeyframe(inValue: number | string | boolean | PointF | Color): Keyframe; //Creates and returns a keyframe initialised with the ComponentParam's type and passed in value. This throws if the passed in value is not compatible with the component param type
-	getValueAtTime(
-		time: TickTime,
-	): Promise<number | string | boolean | PointF | Color>; //Gets the value of component Param at the given time
+	getValueAtTime(time: TickTime): Promise<number | string | boolean | PointF | Color>; //Gets the value of component Param at the given time
 	findNearestKeyframe(inTime: TickTime, outTime: TickTime): Keyframe; //Find sthe nearest key for the given time
 	findNextKeyframe(inTime: TickTime): Keyframe; //find the next keyframe for the given time
 	findPreviousKeyframe(inTime: TickTime): Keyframe; //find the previous keyframe for the given time
 	createRemoveKeyframeAction(inTime: TickTime, UpdateUI?: boolean): Action; //Returns an action which removes keyframe at specific time
-	createRemoveKeyframeRangeAction(
-		inTime: TickTime,
-		outTime: TickTime,
-		UpdateUI?: boolean,
-	): Action; //Returns an action which removes keyframe at specific time range
-	createSetValueAction(
-		inKeyFrame: Keyframe,
-		inSafeForPlayback?: boolean,
-	): Action; //Creates and returns an action object which can be used to set the value of a non-time varying component
+	createRemoveKeyframeRangeAction(inTime: TickTime, outTime: TickTime, UpdateUI?: boolean): Action; //Returns an action which removes keyframe at specific time range
+	createSetValueAction(inKeyFrame: Keyframe, inSafeForPlayback?: boolean): Action; //Creates and returns an action object which can be used to set the value of a non-time varying component
 	createAddKeyframeAction(inKeyFrame: Keyframe): Action; //Creates and returns an action object which can be used to add a keyframe component
 	createSetTimeVaryingAction(inTimeVarying: boolean): Action; //Creates and returns an action object to set the component to be time varying
 	getStartValue(): Promise<Keyframe>; //Returned promise will be fullfilled with the start value (keyframe) of the component param
@@ -316,10 +290,7 @@ export declare type CompoundAction = {
 
 export declare type EncoderManagerStatic = {
 	getManager(): EncoderManager; //Get the Encoder Manager object.
-	getExportFileExtension(
-		sequence: Sequence,
-		presetFilePath: string,
-	): Promise<string>; //Get the Export File Extension of Input Preset file
+	getExportFileExtension(sequence: Sequence, presetFilePath: string): Promise<string>; //Get the Export File Extension of Input Preset file
 	EXPORT_QUEUE_TO_AME: string; //Export type used to queue an export job into the Adobe Media Encoder export queue
 	EXPORT_QUEUE_TO_APP: string; //Export type used to queue an export job into the app export queue
 	EXPORT_IMMEDIATELY: string; //Export type used to immediately exporting an object
@@ -468,9 +439,7 @@ export declare type KeyframeStatic = {
 
 export declare type Keyframe = {
 	getTemporalInterpolationMode(): Promise<number>; //Gets temporal interpolation mode of a keyframe
-	setTemporalInterpolationMode(
-		temporalInterpolationMode: number,
-	): Promise<boolean>; //Sets temporal interpolation mode of a keyframe
+	setTemporalInterpolationMode(temporalInterpolationMode: number): Promise<boolean>; //Sets temporal interpolation mode of a keyframe
 	value: { value: string | number | boolean | Color | PointF };
 	position: TickTime; //Get/Set position of a keyframe
 };
@@ -530,15 +499,8 @@ export declare type MetadataStatic = {
 		metadata: string,
 		updatedFields: string[],
 	): Action; //Get set project metadata action
-	createSetXMPMetadataAction(
-		projectItem: ProjectItem,
-		metadata: string,
-	): Action; //Get set project XMP metadata action
-	addPropertyToProjectMetadataSchema(
-		name: string,
-		label: string,
-		type: number,
-	): Promise<boolean>; //Add name and label property to project metadata schema
+	createSetXMPMetadataAction(projectItem: ProjectItem, metadata: string): Action; //Get set project XMP metadata action
+	addPropertyToProjectMetadataSchema(name: string, label: string, type: number): Promise<boolean>; //Add name and label property to project metadata schema
 	getProjectColumnsMetadata(projectItem: ProjectItem): Promise<string>; //Get project column metadata from project item
 	getProjectPanelMetadata(): Promise<string>; //Get project panel metadata
 	setProjectPanelMetadata(metadata: string): Promise<boolean>; //Set project panel metadata
@@ -551,9 +513,7 @@ export declare type MetadataStatic = {
 export declare type Metadata = {};
 
 export declare type OpenProjectOptions = {
-	setShowConvertProjectDialog(
-		showConvertProjectDialog: boolean,
-	): OpenProjectOptions; //Set whether to show the convert project dialog on project open/close
+	setShowConvertProjectDialog(showConvertProjectDialog: boolean): OpenProjectOptions; //Set whether to show the convert project dialog on project open/close
 	setShowLocateFileDialog(showLocateFileDialog: boolean): OpenProjectOptions; //Set whether to show the locate file dialog on project open/close
 	setShowWarningDialog(showConvertProjectDialog: boolean): OpenProjectOptions; //Set whether to show the warning file dialog on project open/close
 	setAddToMRUList(addToMRUList: boolean): OpenProjectOptions; //Set whether to add to MRU list after project changes
@@ -612,11 +572,7 @@ export declare type Project = {
 	getInsertionBin(): Promise<ProjectItem>; //Get current insertion bin
 	openSequence(sequence: Sequence): Promise<boolean>; //Open a sequence and return true if successful.
 	importSequences(projectPath: string, sequenceIds?: Guid[]): Promise<boolean>;
-	importAEComps(
-		aepPath: string,
-		compNames: string[],
-		TargetBin?: ProjectItem,
-	): Promise<boolean>;
+	importAEComps(aepPath: string, compNames: string[], TargetBin?: ProjectItem): Promise<boolean>;
 	importAllAEComps(aepPath: string, TargetBin?: ProjectItem): Promise<boolean>;
 	importFiles(
 		filePaths: string[],
@@ -701,10 +657,7 @@ export declare type ProjectSettingsStatic = {
 	): Action; //Returns an action which sets ScratchDiskSetting
 	getScratchDiskSettings(project: Project): Promise<ScratchDiskSettings>; //Returns project ScratchDiskSettings
 	getIngestSettings(project: Project): Promise<IngestSettings>; //Returns project ingest settings
-	createSetIngestSettingsAction(
-		project: Project,
-		ingestSettings: IngestSettings,
-	): Action; //Returns an action which sets IngestSettings
+	createSetIngestSettingsAction(project: Project, ingestSettings: IngestSettings): Action; //Returns an action which sets IngestSettings
 };
 
 export declare type ProjectSettings = {};
@@ -893,9 +846,7 @@ export declare type SequenceSettings = {
 	getVideoPixelAspectRatio(): Promise<string>; //Get Video display format
 	setVideoPixelAspectRatio(inPixelAspectRatio: string): Promise<boolean>; //Set video display format of sequence
 	getCompositeInLinearColor(): Promise<boolean>; //Get if composite in linear color is checked
-	setCompositeInLinearColor(
-		useCompositeInLinearColor: boolean,
-	): Promise<boolean>; //Set if composite in linear color is checked
+	setCompositeInLinearColor(useCompositeInLinearColor: boolean): Promise<boolean>; //Set if composite in linear color is checked
 	getEditingMode(): Promise<string>; //Get editing mode of sequence
 	setEditingMode(inEditingModeName: string): Promise<boolean>; //Set editing mode of sequence
 	getPreviewFileFormat(): Promise<string>; //Get preview file format of sequence
@@ -942,19 +893,13 @@ export declare type SourceMonitorStatic = {
 export declare type SourceMonitor = {};
 
 export declare type TextSegmentsStatic = {
-	importFromJSON(
-		json: string,
-		callback1: (importedTranscription: TextSegments) => void,
-	): boolean; //Import text segments in JSON format for handling via callback.
+	importFromJSON(json: string, callback1: (importedTranscription: TextSegments) => void): boolean; //Import text segments in JSON format for handling via callback.
 };
 
 export declare type TextSegments = {};
 
 export declare type TickTimeStatic = {
-	createWithFrameAndFrameRate(
-		frameCount: number,
-		frameRate: FrameRate,
-	): TickTime; //Constructs a TickTime object with a frame and a frame rate.
+	createWithFrameAndFrameRate(frameCount: number, frameRate: FrameRate): TickTime; //Constructs a TickTime object with a frame and a frame rate.
 	createWithSeconds(seconds: number): TickTime; //Constructs a TickTime object with seconds.
 	createWithTicks(ticks: string): TickTime; //Constructs a TickTime object with ticks as a string.
 	TIME_ZERO: TickTime; //Zero Tick Time Constant
@@ -985,9 +930,7 @@ export declare type TimeDisplay = {
 };
 
 export declare type TrackItemSelectionStatic = {
-	createEmptySelection(
-		callback0: (selection: TrackItemSelection) => void,
-	): boolean; //Create empty selection
+	createEmptySelection(callback0: (selection: TrackItemSelection) => void): boolean; //Create empty selection
 };
 
 export declare type TrackItemSelection = {
@@ -1007,9 +950,7 @@ export declare type TransitionFactoryStatic = {
 export declare type TransitionFactory = {};
 
 export declare type UniqueSerializeableStatic = {
-	cast(
-		item: ProjectItem | ClipProjectItem | FolderItem | Sequence,
-	): UniqueSerializeable; //Cast serializable object (ex. ProjectItem) into UniqueSerializeable
+	cast(item: ProjectItem | ClipProjectItem | FolderItem | Sequence): UniqueSerializeable; //Cast serializable object (ex. ProjectItem) into UniqueSerializeable
 };
 
 export declare type UniqueSerializeable = {
@@ -1035,9 +976,7 @@ export declare type VideoClipTrackItem = {
 		videoTransition: VideoTransition,
 		addTransitionOptionsProperties?: AddTransitionOptions,
 	): Action; //Create add transition action for sequence
-	createRemoveVideoTransitionAction(
-		transitionPosition?: Constants.TransitionPosition,
-	): Action; //Returns true if trackItem has transition
+	createRemoveVideoTransitionAction(transitionPosition?: Constants.TransitionPosition): Action; //Returns true if trackItem has transition
 	getMatchName(): Promise<string>; //Returns the value of internal matchname for this trackItem
 	getName(): Promise<string>; //Returns the display name for trackItem
 	getIsSelected(): Promise<boolean>; //Returns if trackItem is selected or not
@@ -1071,12 +1010,8 @@ export declare type VideoComponentChain = {
 		component: Component | VideoFilterComponent,
 		componentInsertionIndex: number,
 	): Action; //Creates and returns an insert component action
-	createAppendComponentAction(
-		component: Component | VideoFilterComponent,
-	): Action; //Creates and returns an append component action
-	createRemoveComponentAction(
-		component: Component | VideoFilterComponent,
-	): Action; //Creates and returns an remove component action
+	createAppendComponentAction(component: Component | VideoFilterComponent): Action; //Creates and returns an append component action
+	createRemoveComponentAction(component: Component | VideoFilterComponent): Action; //Creates and returns an remove component action
 	getComponentAtIndex(componentIndex: number): Component; //Returns the component at the given index
 	getComponentCount(): number; //Gets the number of components in the component chain
 };

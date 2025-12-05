@@ -1,7 +1,4 @@
-import type {
-	ActionDescriptor,
-	BatchPlayCommandOptions,
-} from "photoshop/dom/CoreModules";
+import type { ActionDescriptor, BatchPlayCommandOptions } from "photoshop/dom/CoreModules";
 import { photoshop, uxp } from "../../globals";
 
 const { executeAsModal } = photoshop.core;
@@ -16,10 +13,9 @@ export const bpModal = async (
 	commands: ActionDescriptor[],
 	options?: BatchPlayCommandOptions,
 ): Promise<Array<ActionDescriptor>> => {
-	return await executeAsModal(
-		async () => await batchPlay(commands, options || {}),
-		{ commandName },
-	);
+	return await executeAsModal(async () => await batchPlay(commands, options || {}), {
+		commandName,
+	});
 };
 
 export const bp = batchPlay;

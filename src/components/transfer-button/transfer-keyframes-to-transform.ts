@@ -1,30 +1,20 @@
 import { premierepro } from "../../globals";
-import {
-	MATCH_NAME_MOTION,
-	MATCH_NAME_OPACITY,
-	MATCH_NAME_TRANSFORM,
-} from "../../types/effect-match-names";
-import {
+import { MATCH_NAME_MOTION, MATCH_NAME_TRANSFORM } from "../../types/effect-match-names";
+import type {
 	Action,
-	AudioClipTrackItem,
-	Component,
 	ComponentParam,
 	Keyframe,
-	PointF,
-	Project,
-	VideoClipTrackItem,
 	VideoComponentChain,
 	VideoFilterComponent,
 } from "../../types/ppro";
 import {
-	ComponentKeyframesAndValues,
-	getClipComponentByMatchName,
+	type ComponentKeyframesAndValues,
 	getComponentKeyframesOrValuesFromClip,
-	KeyframesOrValue,
-	ParamValue,
+	type KeyframesOrValue,
+	type ParamValue,
 } from "./get-component-keyframes-from-clip";
 import { getActiveProject, getSelectedClipsFromTimeline } from "./get-project-entities";
-import { Clip } from "./types";
+import type { Clip } from "./types";
 import { isVideoClipTrackItem } from "./util";
 
 // TODO: flow:

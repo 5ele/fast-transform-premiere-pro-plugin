@@ -10,8 +10,7 @@ process.env.VITE_BOLT_MODE = mode;
 
 if (action) runAction(config, action);
 
-const shouldNotEmptyDir =
-	mode === "dev" && config.manifest.requiredPermissions?.enableAddon;
+const shouldNotEmptyDir = mode === "dev" && config.manifest.requiredPermissions?.enableAddon;
 
 export default defineConfig({
 	plugins: [uxp(config, mode), react()],
