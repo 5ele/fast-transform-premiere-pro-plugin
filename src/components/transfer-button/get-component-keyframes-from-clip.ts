@@ -141,18 +141,13 @@ const getParamKeyframesOrValue = async (param: ComponentParam) => {
 	const paramKeyframeTimes: TickTime[] = param.getKeyframeListAsTickTimes();
 	const keyframes: Keyframe[] = [];
 
-	// no keyframes, return the value
+	// VALUE, return the constant value
 	if (paramKeyframeTimes.length === 0) {
 		const startKeyframe = await param.getStartValue();
-		console.log("🚀 ~ getParamKeyframesOrValue ~ startKeyframe:", startKeyframe);
-		// startKeyframe.value;
-		let paramValue = startKeyframe.value.value; // works for number, string, boolean
-
-		// console.log("🚀 ~ getParamKeyframesOrValue ~ startKeyframe.value:", startKeyframe.value);
-		// console.log("🚀 ~ getParamKeyframesOrValue ssssssssssssss~ paramValue:", paramValue);
+		const paramValue = startKeyframe.value.value; // works for number, string, boolean
 		return { hasKeyframes: false, keyframesOrValue: paramValue };
 	}
-	// has keyframes
+	// KEYFRAMES
 	else {
 		paramKeyframeTimes.forEach(async (keyframeTime) => {
 			const keyframe = await param.getKeyframePtr(keyframeTime);
