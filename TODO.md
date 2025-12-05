@@ -5,9 +5,19 @@ Flows:
 - CANNOT TRANSFER KEYFRAME EASING
 
 
-Nomenclature:
-component: effect
-param: effect param
+# Nomenclature:
+- component: effect
+- param: effect param
+- createSetTimeVaryingAction(true): this is turning the keyframe stopwatch on and off...........
+
+# TODO
+
+# BUGS
+- [ ] BUG: If a AudioClipTrackItem is selected it'll kill the whole program
+  - HINT: VideoClipTrackItem check is definitely not working
+
+# OTHER
+
 
 - [ ] TODO: >>>> transfer-keyframes-to-transform.ts <<<<
 

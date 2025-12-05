@@ -12,6 +12,7 @@ import type {
 	VideoClipTrackItem,
 } from "../../types/ppro";
 import { getSelectedClipsFromTimeline } from "./get-project-entities";
+import { Clip } from "./types";
 
 export type MotionParams = {
 	position: PointF;
@@ -94,26 +95,32 @@ export const getComponentKeyframesOrValuesFromClip = async ({
 		// 	return;
 
 		// SEARCH EFFECTS ON CLIP
-		const componentChain = await clip.getComponentChain();
-		const numComponents = await componentChain.getComponentCount();
+		const component = await getClipComponentByMatchName(clip, componentMatchName);
+		if (!component) throw new Error(`ERR: Couldn't find component: ${componentMatchName}`);
 
-		for (let i = 0; i < numComponents; i++) {
-			const component = componentChain.getComponentAtIndex(i);
-			const matchName = await component.getMatchName();
+		const params = await getComponentParams(component);
+		keyframesAndValues = await getKeyframesAndValuesFromParams(params);
 
-			// FOUND EFFECT / "component"
-			if (matchName === componentMatchName) {
-				const params = await getComponentParams(component);
-				keyframesAndValues = await getKeyframesAndValuesFromParams(params);
-
-				return keyframesAndValues;
-			}
-		}
-		// }
+		return keyframesAndValues;
 	} catch (e) {
 		console.log("🚀 ~ getComponentKeyframesOrValuesFromSelectedClips ~ e:", e);
 		console.error(e);
 		return;
+	}
+};
+
+export const getClipComponentByMatchName = async (clip: Clip, componentMatchName: string) => {
+	const componentChain = await clip.getComponentChain();
+	const numComponents = await componentChain.getComponentCount();
+
+	for (let i = 0; i < numComponents; i++) {
+		const component = componentChain.getComponentAtIndex(i);
+		const matchName = await component.getMatchName();
+
+		// FOUND EFFECT / "component"
+		if (matchName === componentMatchName) {
+			return component;
+		}
 	}
 };
 

@@ -18,6 +18,7 @@ import {
 } from "../../types/ppro";
 import {
 	ComponentKeyframesAndValues,
+	getClipComponentByMatchName,
 	getComponentKeyframesOrValuesFromClip,
 	KeyframesOrValue,
 	ParamValue,
@@ -38,6 +39,33 @@ import { isVideoClipTrackItem } from "./util";
 // 							- option?
 // 								- i.e. when I use multiple transforms on a single clip: framing, face-tracking, etc.
 // 							- options: 'create new or re-use', 'if more than one, re-use first', 'always create new'
+
+// export type MotionParams = {
+//  0	position: PointF;
+//  1	scale: number;
+//  2	scaleWidth: number;
+//  3	uniformScale: boolean;
+//  4	rotation: number;
+//  5	anchorPoint: PointF;
+//  6	antiFlickerFilter: number;
+//  7	cropLeft: number;
+//  8	cropTop: number;
+//  9	cropRight: number;
+//  10	cropBottom: number;
+
+// TRANSFORM PARAMS
+// 0   Anchor Point				:
+// 1   Position						:
+// 2   										: Uniform Scale
+// 3   Scale							: Scale / Scale Height
+// 4    									: Scale Width
+// 5   Skew								:
+// 6   Skew Axis					:
+// 7   Rotation						:
+// 8   Opacity						:
+// 9   " "								: Use Composition's Shutter Angle (should always be off)
+// 10   Shutter Angle			:
+// 11   Sampling					:
 
 export type SelectedClipsToTransfer = "all" | "closestToPlayhead";
 type Options = {
@@ -99,20 +127,6 @@ const createTransformFromMotion = async (clips: Clip[], options?: Options) => {
 		]);
 
 		handleClipPromises.push(concurrentFunctions);
-		// // add new transform effect to clip
-		// const addTransformAction = async () => {
-		// 	// const [components, transformComponent] = await Promise.all([
-		// 		// get clip components
-		// 		clip.getComponentChain(),
-
-		// 		// create a transform effect object
-		// 		premierepro.VideoFilterFactory.createComponent(MATCH_NAME_TRANSFORM),
-		// 	]);
-		// 	// const addTransformAction =
-		// 	// 	 components.createAppendComponentAction(transformComponent);
-
-		// 	return { addTransformAction, components, transformComponent };
-		// };
 	}
 
 	const clipsWithActionsAndInfo: {
@@ -150,8 +164,10 @@ const createTransformFromMotion = async (clips: Clip[], options?: Options) => {
 
 	const project = await getActiveProject();
 	let success = true;
+	let countExecutionLoops = 0;
+
+	// EXECUTE ACTIONS: UN-DOABLE ----------------------------------------------------------------------------
 	project.lockedAccess(() => {
-		let countExecutionLoops = 0;
 		success = project.executeTransaction((compoundAction) => {
 			for (const clip of clipsWithActionsAndInfo) {
 				compoundAction.addAction(clip.addTransformAction);
@@ -163,46 +179,29 @@ const createTransformFromMotion = async (clips: Clip[], options?: Options) => {
 			throw new Error("ERR: Failed to create transform effect(s)");
 	});
 
-	// export type MotionParams = {
-	//  0	position: PointF;
-	//  1	scale: number;
-	//  2	scaleWidth: number;
-	//  3	uniformScale: boolean;
-	//  4	rotation: number;
-	//  5	anchorPoint: PointF;
-	//  6	antiFlickerFilter: number;
-	//  7	cropLeft: number;
-	//  8	cropTop: number;
-	//  9	cropRight: number;
-	//  10	cropBottom: number;
+	// for (const clip of clipsWithActionsAndInfo) {
+	// 	const components = clip.components;
+	// 	const componentCount = components.getComponentCount();
 
-	//  };
+	// 	// assuming transform is last component
+	// 	const transformComponent = components.getComponentAtIndex(componentCount - 1);
+	// 	const paramsCount = transformComponent.getParamCount();
+	// 	const motionKeyframesAndValues = clip.motionKeyframesAndValues;
+	// 	const motionParamIndexedKeys = Object.keys(motionKeyframesAndValues);
 
-	// 0   Anchor Point				:
-	// 1   Position						:
-	// 2   										: Uniform Scale
-	// 3   Scale							: Scale / Scale Height
-	// 4    									: Scale Width
-	// 5   Skew								:
-	// 6   Skew Axis					:
-	// 7   Rotation						:
-	// 8   Opacity						:
-	// 9   " "								: Use Composition's Shutter Angle (should always be off)
-	// 10   Shutter Angle			:
-	// 11   Sampling					:
-	// export type ComponentKeyframesAndValues = Record<string, KeyframesOrValue>;
-	// type MotionKeyframesAndValues = {
-	// 	position: PointF;
-	// scale: number;
-	// scaleWidth: number;
-	// uniformScale: boolean;
-	// rotation: number;
-	// anchorPoint: PointF;
-	// antiFlickerFilter: number;
-	// cropLeft: number;
-	// cropTop: number;
-	// cropRight: number;
-	// 	cropBottom: number;
+	// 	for (let paramIndex = 0; paramIndex < paramsCount; paramIndex++) {
+	// 		const param = transformComponent.getParam(paramIndex);
+
+	// 		const isKeyframable = await param.areKeyframesSupported();
+	// 		// if (!isKeyframable) break;
+
+	// 		// const action = param.createSetTimeVaryingAction(true);
+	// 		// project.lockedAccess(() => {
+	// 		// 	project.executeTransaction((compoundAction) => {
+	// 		// 		compoundAction.addAction(action);
+	// 		// 	}, "set time varying");
+	// 		// });
+	// 	}
 	// }
 
 	// this is all synchronous --- but don't think I can combine this into less than 2 un-doable executions
@@ -219,6 +218,7 @@ const createTransformFromMotion = async (clips: Clip[], options?: Options) => {
 
 		for (let paramIndex = 0; paramIndex < paramsCount; paramIndex++) {
 			try {
+				//TODO: MOVE HERE
 				const transformParam = transformComponent.getParam(paramIndex);
 				let correspondingMotionParamIndex: number = -1;
 				// transform: anchor point
@@ -279,6 +279,7 @@ const createTransformFromMotion = async (clips: Clip[], options?: Options) => {
 					const correspondingMotionParam: KeyframesOrValue =
 						motionKeyframesAndValues[motionParamIndexedKeys[correspondingMotionParamIndex]];
 					const actions: Action[] = updateTransformParam(correspondingMotionParam, transformParam);
+
 					if (actions && actions.length > 0) transferParamsActions.push(...actions);
 				}
 			} catch (e) {
@@ -287,13 +288,55 @@ const createTransformFromMotion = async (clips: Clip[], options?: Options) => {
 		}
 	}
 
+	// countExecutionLoops = 0;
 	project.lockedAccess(() => {
-		project.executeTransaction((compoundAction) => {
+		success = project.executeTransaction((compoundAction) => {
 			for (const action of transferParamsActions) {
 				compoundAction.addAction(action);
+				// countExecutionLoops++;
 			}
 		}, "Send: Motion -> Transform");
+
+		if (!success) {
+			// || countExecutionLoops !== transferParamsActions.length) {
+			// console.log("🚀 ~ createTransformFromMotion ~ countExecutionLoops:", countExecutionLoops);
+			// console.log("🚀 ~ createTransformFromMotion ~ success:", success);
+			// console.log(
+			// 	"🚀 ~ createTransformFromMotion ~ transferParamsActions.length:",
+			// 	transferParamsActions.length,
+			// );
+			// console.error("hi");
+			throw new Error("ERR: Failed to transfer keyframes/values");
+		}
 	});
+
+	// DISABLE MOTION EFFECT
+	// TODO: combine this into the 2nd un-doable execution
+	// this didn't work, either way I can just reset all params individually it's really the same thing.
+	// separate execution -> can just hit ctrl+z to get the motion settings back (but only works if it's my next move)
+	// could also store motion settings and have a restore button. Like restore motion keyframes
+
+	// for (const clip of clips) {
+	// 	const motionComponent = await getClipComponentByMatchName(clip, MATCH_NAME_MOTION);
+	// 	const componentChain = await clip.getComponentChain();
+	// 	const numComponents = componentChain.getComponentCount();
+	// 	for (let i = 0; i < numComponents; i++) {
+	// 		const component = componentChain.getComponentAtIndex(i);
+	// 		const name = await component.getMatchName();
+	// 		console.log("🚀 ~ createTransformFromMotion ~ name:", i, name);
+	// 	}
+
+	// 	if (motionComponent) {
+	// 		const removeComponentAction = componentChain.createRemoveComponentAction(motionComponent);
+
+	// 		project.lockedAccess(() => {
+	// 			success = project.executeTransaction((compoundAction) => {
+	// 				compoundAction.addAction(removeComponentAction);
+	// 				// compoundAction.addAction(addNewMotionComponent);
+	// 			}, "Send: Motion -> Transform");
+	// 		});
+	// 	}
+	// }
 };
 
 // If param doesn't have keyframes this doesn't do anything
@@ -319,18 +362,20 @@ const updateTransformParam = (
 	//
 	if (correspondingMotionParam.hasKeyframes) {
 		const motionKeyframes = correspondingMotionParam.keyframesOrValue as Keyframe[];
+		const setTimeVaryingAction = transformParam.createSetTimeVaryingAction(true);
+		actions.push(setTimeVaryingAction);
 		for (const motionKeyframe of motionKeyframes) {
 			const addKeyframeAction = transformParam.createAddKeyframeAction(motionKeyframe);
+
 			actions.push(addKeyframeAction);
 		}
 	}
-	//
 	//
 	// MOTION PARAM: KEYFRAMES => TRANSFORM PARAM
 	// ------------------------------------------------------------------------------
 
 	// MOTION PARAM: SINGLE VALUE => TRANSFORM PARAM
-	else {
+	else if (!correspondingMotionParam.hasKeyframes) {
 		const motionValue = correspondingMotionParam.keyframesOrValue as ParamValue;
 		let keyframeFromMotion: Keyframe;
 		if (
@@ -362,3 +407,13 @@ const updateTransformParam = (
 
 	return actions;
 };
+
+// const test = async (action: Action) => {
+// 	const project = await getActiveProject();
+
+// 	project.lockedAccess(() => {
+// 		project.executeTransaction((compoundAction) => {
+// 			compoundAction.addAction(action);
+// 		}, "varying step");
+// 	});
+// };
