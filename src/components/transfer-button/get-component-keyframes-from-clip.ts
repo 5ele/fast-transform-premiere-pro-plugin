@@ -61,7 +61,7 @@ export type OpacityKeyframesOrValue = {
 
 // TODO: 	possible bug, if there are other keyframe types out there other than these.
 //				prob only a bug if they change it.
-type ParamValue = string | number | boolean | PointF | Color;
+export type ParamValue = string | number | boolean | PointF | Color;
 
 export type KeyframesOrValue = {
 	hasKeyframes: boolean;
@@ -144,7 +144,12 @@ const getParamKeyframesOrValue = async (param: ComponentParam) => {
 	// no keyframes, return the value
 	if (paramKeyframeTimes.length === 0) {
 		const startKeyframe = await param.getStartValue();
-		const paramValue = startKeyframe.value.value;
+		console.log("🚀 ~ getParamKeyframesOrValue ~ startKeyframe:", startKeyframe);
+		// startKeyframe.value;
+		let paramValue = startKeyframe.value.value; // works for number, string, boolean
+
+		// console.log("🚀 ~ getParamKeyframesOrValue ~ startKeyframe.value:", startKeyframe.value);
+		// console.log("🚀 ~ getParamKeyframesOrValue ssssssssssssss~ paramValue:", paramValue);
 		return { hasKeyframes: false, keyframesOrValue: paramValue };
 	}
 	// has keyframes

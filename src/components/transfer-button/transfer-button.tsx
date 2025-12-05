@@ -7,11 +7,11 @@ export const TransferButton = () => {
 		try {
 			const response = await motionKeyframesToTransformEffect("all");
 
-			const textRes = JSON.stringify(response);
-			setOutput(textRes);
+			// const textRes = JSON.stringify(response);
+			// setOutput(textRes);
 		} catch (e) {
 			const msg = e instanceof Error ? e.message : JSON.stringify(e);
-			setOutput(msg);
+			// setOutput(msg);
 		}
 	};
 
